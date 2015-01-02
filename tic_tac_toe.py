@@ -1,8 +1,29 @@
-# A perfect tic_tac_toe player
-#gameBoard = [[0,0,0],[0,0,0],[0,0,0]]
-gameBoard = [[1,0,1],[2,2,0],[2,0,1]]
-log=[[]]
-# graphDic = {}
+# A perfect Tic Tac Toe player using the strategy in Newell and Simon's 1972 tic-tac-toe program.
+
+# Initial Variable
+#gameBoard = [[0,0,0],[0,0,0],[0,0,0]]	# The Game Board
+gameBoard = [[1,0,1],[2,2,0],[2,0,1]]	#Testing
+log=[]	# The log of the coordinate
+# graphDic = {}	# Graph
+
+
+# Board Function
+def printBoard():
+	print "    1   2   3"
+	print "  +-----------+"
+	for row in range(3):
+		rowPrint = str(row+1) + " |"
+		for element in gameBoard[row]:
+			if element == 0:	# Empty Space
+				rowPrint += "   |"
+			elif element == 1:	# User's Mark
+				rowPrint += " X |"
+			elif element == 2:	# Program's Mark
+				rowPrint += " O |"
+			else:
+				print "Something Wrong!!!!"
+		print rowPrint
+		print "  +-----------+"
 
 def logInput(user, coordinate):
 	if user:
@@ -10,9 +31,11 @@ def logInput(user, coordinate):
 	else:
 		log.append(coordinate)
 
+def putMark(user, coordinate):
+	logInput(user, coordinate)
+	gameBoard[coordinate[0]-1][coordinate[1]-1]= 1 if user else 2
 
-# Can be imrpoved
-# Check every possible solution
+# Check every possible solution, but might be able to improve
 def winCheck():
 	# Add 4 for program
 	# Add 1 for user
@@ -39,10 +62,10 @@ def winCheck():
 		elif x == 12:
 			return 2
 
-	# Check Dialog:
+	# Check Dialogtic:
 	centerNum = gameBoard[1][1]
 	if(gameBoard[0][0]==centerNum and centerNum ==gameBoard[2][2])or(gameBoard[0][2]==centerNum and centerNum ==gameBoard[2][0]):
-		# Will return 0 when both dialogs is not occupied
+		# Will return 0 when both dialogtic is not occupied
 		return centerNum
 
 	return 0 
@@ -61,6 +84,8 @@ def winCheck():
 # 			if(checkGraphRange((i,j+1))):
 # 				graphDic[(i,j)].append((i,j+1))
 
+
+# User Moving Function
 def checkCoordinateRange(coordinate):
 	return len(coordinate)==2 and coordinate[0]<=3 and coordinate[1]<=3 and coordinate[0]>0 and coordinate[1]>0 and gameBoard[coordinate[0]-1][coordinate[1]-1]==0
 
@@ -74,29 +99,16 @@ def readCoordinate():
 
 def userMove():
 	coordinate = readCoordinate()
-	logInput(True, coordinate)
-	gameBoard[coordinate[0]-1][coordinate[1]-1]=1
+	putMark(True, coordinate)
 
-def printBoard():
-	print "    1   2   3"
-	print "  +-----------+"
-	for row in range(3):
-		rowPrint = str(row+1) + " |"
-		for element in gameBoard[row]:
-			if element == 0:	# Empty Space
-				rowPrint += "   |"
-			elif element == 1:	# User's Mark
-				rowPrint += " X |"
-			elif element == 2:	# Program's Mark
-				rowPrint += " O |"
-			else:
-				print "Something Wrong!!!!"
-		print rowPrint
-		print "  +-----------+"
 
+# Program Moving Function
+
+
+# Main Function
 def main():
 	# Prepare
-	#///////////////createGraphDic()
+	#createGraphDic()
 	winner = 0
 
 	# Starter
@@ -106,6 +118,7 @@ def main():
 	while winner == 0:
 		printBoard()
 		userMove()
+		programMove()
 		winner = winCheck()
 
 	print ''
@@ -115,4 +128,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-	#print winCheck()
