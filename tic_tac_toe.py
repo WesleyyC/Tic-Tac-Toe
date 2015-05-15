@@ -8,6 +8,7 @@ log=[]	# The log of the coordinate
 
 # Board Function
 def printBoard():
+	print ''
 	print "    1   2   3"
 	print "  +-----------+"
 	for row in range(3):
@@ -23,6 +24,7 @@ def printBoard():
 				print "Something Wrong!!!!"
 		print rowPrint
 		print "  +-----------+"
+	print ''
 
 # A log for gaming progress
 def logInput(user, coordinate):
@@ -215,50 +217,47 @@ def userMove():
 
 # Program Moving Function
 def programMove():
-	# In case the program double move
-	notPut = True;
 	# 1st check if the program can win
 	win = potentialWinCheck(False)
-	if (win!=False and notPut):
+	if (win!=False):
 		putMark(False,programCoordinate(win))
-		notPut = False
+		return
 	# 2ne block user's win
 	block = potentialWinCheck(True)
-	if (block!=False and notPut):
+	if (block!=False):
 		putMark(False,programCoordinate(block))
-		notPut = False
+		return
 	# 3rd try to fork
 	programFork = fork(False)
-	if (programFork!=False and notPut):
+	if (programFork!=False):
 		putMark(False,programCoordinate(programFork))
-		notPut = False
+		return
 	# 4th try to block fork
 	userFork = fork(True)
-	if (userFork!=False and notPut):
+	if (userFork!=False):
 		putMark(False,programCoordinate(userFork))
-		notPut = False
+		return
 	# 5th put in the center
-	if (center() and notPut):
+	if (center()):
 		putMark(False,(2,2))
-		notPut = False
+		return
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
-	if (programOppoCorner!=False and notPut):
+	if (programOppoCorner!=False):
 		putMark(False,programCoordinate(programOppoCorner))
-		notPut = False
+		return
 	# 7th get the corner
 	programCorner = getCorner()
-	if (programCorner!=False and notPut):
+	if (programCorner!=False):
 		putMark(False,programCoordinate(programCorner))
-		notPut = False
+		return
 	# 8th get the side
 	programSide = getSide()
-	if (programSide!=False and notPut):
+	if (programSide!=False):
 		putMark(False,programCoordinate(programSide))
-		notPut = False
-	# check there is a put
-	if notPut:
-		print("Something is wrong!!");
+		return
+
+	print("Something is wrong!!");
 
 def getSide():
 	if gameBoard[1][0]==0:
