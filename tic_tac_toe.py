@@ -36,6 +36,7 @@ def putMark(user, coordinate):
 	gameBoard[coordinate[0]-1][coordinate[1]-1]= 1 if user else 2
 
 # Check every possible solution, but might be able to improve
+# Give number for each cell and then we can sum each colum or row or diagno to check win.
 def winCheck():
 	# Add 4 for program
 	# Add 1 for user
