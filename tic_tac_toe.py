@@ -70,20 +70,21 @@ def winCheck():
 
 	return 0 
 
-# def checkGraphRange(coordinate):
-# 	return len(coordinate)==2 and coordinate[0]<3 and coordinate[1]<3 and coordinate[0]>=0 and coordinate[1]>=0
+'''
+def checkGraphRange(coordinate):
+	return len(coordinate)==2 and coordinate[0]<3 and coordinate[1]<3 and coordinate[0]>=0 and coordinate[1]>=0
 
-# def createGraphDic():
-# 	for i in range(3):
-# 		for j in range(3):
-# 			graphDic[(i,j)]=[]
-# 			if(checkGraphRange((i+1,j))):
-# 				graphDic[(i,j)].append((i+1,j))
-# 			if(checkGraphRange((i+1,j+1))):
-# 				graphDic[(i,j)].append((i+1,j+1))
-# 			if(checkGraphRange((i,j+1))):
-# 				graphDic[(i,j)].append((i,j+1))
-
+def createGraphDic():
+	for i in range(3):
+		for j in range(3):
+			graphDic[(i,j)]=[]
+			if(checkGraphRange((i+1,j))):
+				graphDic[(i,j)].append((i+1,j))
+			if(checkGraphRange((i+1,j+1))):
+				graphDic[(i,j)].append((i+1,j+1))
+			if(checkGraphRange((i,j+1))):
+				graphDic[(i,j)].append((i,j+1))
+'''
 
 # User Moving Function
 def checkCoordinateRange(coordinate):
@@ -103,7 +104,8 @@ def userMove():
 
 
 # Program Moving Function
-
+def programMove():
+	
 
 # Main Function
 def main():
