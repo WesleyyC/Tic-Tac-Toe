@@ -257,8 +257,6 @@ def programMove():
 		putMark(False,programCoordinate(programSide))
 		return
 
-	print("Something is wrong!!");
-
 def getSide():
 	if gameBoard[1][0]==0:
 		return (1,0)
