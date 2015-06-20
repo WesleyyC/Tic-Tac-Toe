@@ -4,7 +4,7 @@
 gameBoard = [[0,0,0],[0,0,0],[0,0,0]]	#Testing
 count = 0	# Keep track of the filling progress
 log=[]	# The log of the coordinate
-
+firstHand = 0 # 0 for User go first and 1 for computer go first
 
 # Board Function
 def printBoard():
@@ -116,16 +116,14 @@ def potentialWinCheck(User):
 	# Check diagnol series
 	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==0 and gameBoard[1][1]==(test+1)/2):
 		return (2,2)
-	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==0 and gameBoard[2][2]==(test+1)/2):
-		return (1,1)
 	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==0 and gameBoard[2][2]==(test+1)/2):
 		return (0,0)
 	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==0 and gameBoard[1][1]==(test+1)/2):
 		return (2,0)
-	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==0 and gameBoard[2][0]==(test+1)/2):
-		return (1,1)
 	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==0 and gameBoard[2][0]==(test+1)/2):
 		return (0,2)
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==0 and gameBoard[2][2]==(test+1)/2) or (gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==0 and gameBoard[2][0]==(test+1)/2):
+		return (1,1)
 
 	# If no win
 	return False
@@ -153,21 +151,6 @@ def fork(User):
 				rowWin[i] += 1
 				columWin[j] += 1
 
-	# Put daignol series before to avoid Strategy4 Option1 scenrio
-	# Check diagnol series
-	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==0):
-		threat.append((1,1))
-	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==0):
-		threat.append((2,2))
-	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==test and gameBoard[2][2]==0):
-		threat.append((1,1))
-	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==test and gameBoard[1][1]==0):
-		threat.append((1,1))
-	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==test and gameBoard[2][0]==0):
-		threat.append((2,2))
-	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==0):
-		threat.append((1,1))
-
 	# Check row
 	for i in range(3):
 		if(rowWin[i]==2):
@@ -182,6 +165,26 @@ def fork(User):
 				if(gameBoard[i][j]==test):
 					threat.append(((i+1)%3,j))
 					threat.append(((i+2)%3,j))
+
+	# Check diagnol series
+	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==0):
+		threat.append((0,0))
+		threat.append((1,1))
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==0):
+		threat.append((0,0))
+		threat.append((2,2))
+	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==test and gameBoard[2][2]==0):
+		threat.append((1,1))
+		threat.append((2,2))
+	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==test and gameBoard[1][1]==0):
+		threat.append((0,2))
+		threat.append((1,1))
+	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==test and gameBoard[2][0]==0):
+		threat.append((0,2))
+		threat.append((2,0))
+	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==0):
+		threat.append((1,1))
+		threat.append((2,0))
 
 	for i in range(len(threat)-1):
 		for j in range(i+1,len(threat)):
@@ -228,7 +231,7 @@ def twoInARow():
 				if(gameBoard[i][j]==test):
 					return (rightNext(i),j)
 
-	# Check diagnol series
+	#Check diagnol series
 	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==0):
 		return (1,1)
 	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==0):
@@ -242,7 +245,8 @@ def twoInARow():
 	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==0):
 		return (1,0)
 
-	# If no fork
+
+	# If no two in a row
 	return False
 
 
@@ -364,7 +368,7 @@ def main():
 
 	# Loop
 	while (winner == 0 and count!=9):
-		if(count%2==0):
+		if(count%2==firstHand):
 			printBoard()
 			userMove()
 		else:
