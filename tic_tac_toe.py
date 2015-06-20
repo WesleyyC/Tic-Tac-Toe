@@ -130,18 +130,12 @@ def potentialWinCheck(User):
 	# If no win
 	return False
 
-def rightNext(i):
-	if i == 1:
-		return 2
-	else:
-		return 1
-
 # check the possibility for forking
 def fork(User):
 	# threat
 	threat=[]
 
-	# 4 for program
+	# 2 for program
 	# 1 for user
 	if User:
 		test = 1
@@ -159,20 +153,7 @@ def fork(User):
 				rowWin[i] += 1
 				columWin[j] += 1
 
-
-	# Check row
-	for i in range(3):
-		if(rowWin[i]==2):
-			for j in range(3):
-				if(gameBoard[i][j]==test):
-					threat.append((i,rightNext(j)))
-	# Check column
-	for j in range(3):
-		if(columWin[j]==2*test):
-			for i in range(3):
-				if(gameBoard[i][j]==test):
-					threat.append((rightNext(i),j))
-
+	# Put daignol series before to avoid Strategy4 Option1 scenrio
 	# Check diagnol series
 	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==0):
 		threat.append((1,1))
@@ -187,10 +168,79 @@ def fork(User):
 	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==0):
 		threat.append((1,1))
 
+	# Check row
+	for i in range(3):
+		if(rowWin[i]==2):
+			for j in range(3):
+				if(gameBoard[i][j]==test):
+					threat.append((i,(j+1)%3))
+					threat.append((i,(j+2)%3))
+	# Check column
+	for j in range(3):
+		if(columWin[j]==2*test):
+			for i in range(3):
+				if(gameBoard[i][j]==test):
+					threat.append(((i+1)%3,j))
+					threat.append(((i+2)%3,j))
+
 	for i in range(len(threat)-1):
 		for j in range(i+1,len(threat)):
 			if(threat[i]==threat[j]):
 				return threat[i]
+
+	# If no fork
+	return False
+
+# return the key right next to the current key
+def rightNext(n):
+	if (n==2):
+		return 1
+	else:
+		return n+1
+
+# causing a two in a row situation to threat away the fork
+# this is basically the fork function but without storing the possible threat
+def twoInARow():
+	# 2 for program
+	test = 2
+
+	# Counting for winning
+	columWin=[0,0,0]
+	rowWin = [0,0,0]
+
+	# Counting for row and column
+	for i in range(3):
+		for j in range(3):
+			if gameBoard[i][j]==0:
+				rowWin[i] += 1
+				columWin[j] += 1
+
+	# Check row
+	for i in range(3):
+		if(rowWin[i]==2):
+			for j in range(3):
+				if(gameBoard[i][j]==test):
+					return(i,rightNext(j))
+	# Check column
+	for j in range(3):
+		if(columWin[j]==2*test):
+			for i in range(3):
+				if(gameBoard[i][j]==test):
+					return (rightNext(i),j)
+
+	# Check diagnol series
+	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==0):
+		return (1,1)
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==0):
+		return (2,2)
+	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==test and gameBoard[2][2]==0):
+		return (1,1)
+	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==test and gameBoard[1][1]==0):
+		return (1,1)
+	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==test and gameBoard[2][0]==0):
+		return (2,0)
+	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==0):
+		return (1,0)
 
 	# If no fork
 	return False
@@ -232,11 +282,15 @@ def programMove():
 	if (programFork!=False):
 		putMark(False,programCoordinate(programFork))
 		return
-	# 4th try to block fork
+
+	# 4th try to block fork by threating with a two in a row
 	userFork = fork(True)
 	if (userFork!=False):
-		putMark(False,programCoordinate(userFork))
+		tryBlock = twoInARow()
+		if(tryBlock!=False):
+			putMark(False,programCoordinate(tryBlock))
 		return
+
 	# 5th put in the center
 	if (center()):
 		putMark(False,(2,2))
@@ -310,14 +364,16 @@ def main():
 
 	# Loop
 	while (winner == 0 and count!=9):
-		printBoard()
-		userMove()
-		programMove()
+		if(count%2==0):
+			printBoard()
+			userMove()
+		else:
+			programMove()
 		winner = winCheck()
 
 	if winner != 0:
 		print ''
-		print "You Win!" if winner == 1 else "The Computer Wins!"
+		print "You Win! And please report you startegy to the author!" if winner == 1 else "The Computer Wins!"
 	else:
 		print ''
 		print "It's a tie!"
