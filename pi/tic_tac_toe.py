@@ -11,10 +11,10 @@ Undetermined, User, Computer = range(3)
 # Board Function
 def printBoard():
 	print ''
-	print "    1   2   3"
+	print "    0   1   2"
 	print "  +-----------+"
 	for row in range(3):
-		rowPrint = str(row+1) + " |"
+		rowPrint = str(row) + " |"
 		for element in gameBoard[row]:
 			if element == Undetermined:	# Empty Space
 				rowPrint += "   |"
@@ -41,7 +41,7 @@ def putMark(isUser, coordinate):
 	global count 
 	count += 1
 	logInput(isUser, coordinate)
-	gameBoard[coordinate[0]-1][coordinate[1]-1]= 1 if isUser else 2
+	gameBoard[coordinate[0]][coordinate[1]]= 1 if isUser else 2
 
 # Check every possible solution, but might be able to improve
 # Give number for each cell and then we can sum each colum or row or diagno to check win.
@@ -257,7 +257,7 @@ def twoInARow():
 
 # User Moving Function
 def checkCoordinateRange(coordinate):
-	return len(coordinate)==2 and coordinate[0]<=3 and coordinate[1]<=3 and coordinate[0]>0 and coordinate[1]>0 and gameBoard[coordinate[0]-1][coordinate[1]-1]==0
+	return len(coordinate)==2 and coordinate[0]<3 and coordinate[1]<3 and coordinate[0]>=0 and coordinate[1]>=0 and gameBoard[coordinate[0]][coordinate[1]]==Undetermined
 
 # Get the coordinate from user
 def readCoordinate():
@@ -279,17 +279,17 @@ def programMove():
 	# 1st check if the program can win
 	win = potentialWinCheck(False)
 	if (win!=False):
-		putMark(False,programCoordinate(win))
+		putMark(False,win)
 		return
 	# 2nd block user's win
 	block = potentialWinCheck(True)
 	if (block!=False):
-		putMark(False,programCoordinate(block))
+		putMark(False,block)
 		return
 	# 3rd try to fork
 	programFork = fork(False)
 	if (programFork!=False):
-		putMark(False,programCoordinate(programFork))
+		putMark(False,programFork)
 		return
 
 	# 4th try to block fork by threatening with a two in a row
@@ -297,7 +297,7 @@ def programMove():
 	if (userFork!=False):
 		tryBlock = twoInARow()
 		if(tryBlock!=False):
-			putMark(False,programCoordinate(tryBlock))
+			putMark(False,tryBlock)
 		return
 
 	# 5th put in the center
@@ -307,17 +307,17 @@ def programMove():
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
 	if (programOppoCorner!=False):
-		putMark(False,programCoordinate(programOppoCorner))
+		putMark(False,programOppoCorner)
 		return
 	# 7th get the corner
 	programCorner = getCorner()
 	if (programCorner!=False):
-		putMark(False,programCoordinate(programCorner))
+		putMark(False,programCorner)
 		return
 	# 8th get the side
 	programSide = getSide()
 	if (programSide!=False):
-		putMark(False,programCoordinate(programSide))
+		putMark(False,programSide)
 		return
 
 def getSide():
@@ -358,10 +358,6 @@ def oppoCorner():
 
 def center():
 	return gameBoard[1][1]==Undetermined
-
-# the purMark are optimized for user, so we need to increment the coor that program generate
-def programCoordinate(coor):
-	return (coor[0]+1,coor[1]+1)
 
 # Main Function
 def main():
