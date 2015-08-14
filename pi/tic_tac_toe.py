@@ -31,17 +31,15 @@ def printBoard():
 # why the hell is and else have the same instruction??? #
 # A log for gaming progress
 def logInput(activePlayer, coordinate):
-	if activePlayer:
-		log.append(coordinate)
-	else:
-		log.append(coordinate)
+	log.append(activePlayer)
+	log.append(coordinate)
 
 # Put down a mark
-def putMark(isUser, coordinate):
+def putMark(activePlayer, coordinate):
 	global count 
 	count += 1
-	logInput(isUser, coordinate)
-	gameBoard[coordinate[0]][coordinate[1]]= 1 if isUser else 2
+	logInput(activePlayer, coordinate)
+	gameBoard[coordinate[0]][coordinate[1]] = activePlayer
 
 # Check every possible solution, but might be able to improve
 # Give number for each cell and then we can sum each colum or row or diagno to check win.
@@ -271,25 +269,24 @@ def readCoordinate():
 # Get user input and putmark
 def userMove():
 	coordinate = readCoordinate()
-	putMark(True, coordinate)
-
+	putMark(User, coordinate)
 
 # Program Moving Function
 def programMove():
 	# 1st check if the program can win
 	win = potentialWinCheck(False)
 	if (win!=False):
-		putMark(False,win)
+		putMark(Computer,win)
 		return
 	# 2nd block user's win
 	block = potentialWinCheck(True)
 	if (block!=False):
-		putMark(False,block)
+		putMark(Computer,block)
 		return
 	# 3rd try to fork
 	programFork = fork(False)
 	if (programFork!=False):
-		putMark(False,programFork)
+		putMark(Computer,programFork)
 		return
 
 	# 4th try to block fork by threatening with a two in a row
@@ -297,27 +294,27 @@ def programMove():
 	if (userFork!=False):
 		tryBlock = twoInARow()
 		if(tryBlock!=False):
-			putMark(False,tryBlock)
-		return
+			putMark(Computer,tryBlock)
+			return
 
 	# 5th put in the center
 	if (center()):
-		putMark(False,(2,2))
+		putMark(Computer,(2,2))
 		return
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
 	if (programOppoCorner!=False):
-		putMark(False,programOppoCorner)
+		putMark(Computer,programOppoCorner)
 		return
 	# 7th get the corner
 	programCorner = getCorner()
 	if (programCorner!=False):
-		putMark(False,programCorner)
+		putMark(Computer,programCorner)
 		return
 	# 8th get the side
 	programSide = getSide()
 	if (programSide!=False):
-		putMark(False,programSide)
+		putMark(Computer,programSide)
 		return
 
 def getSide():
@@ -325,7 +322,7 @@ def getSide():
 		return (1,0)
 	elif gameBoard[2][1]==Undetermined:
 		return (2,1)
-	elif gameBoard[1][2]==Undetermined :
+	elif gameBoard[1][2]==Undetermined:
 		return (1,2)
 	elif gameBoard[0][1]==Undetermined:
 		return (0,1)
