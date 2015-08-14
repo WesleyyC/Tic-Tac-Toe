@@ -266,7 +266,7 @@ def readCoordinate():
 		return coordinate
 	else:
 		print ("Please make sure the input coordinate is in range and empty. Try again :)")
-		readCoordinate()
+		return readCoordinate()
 
 # Get user input and putmark
 def userMove():
