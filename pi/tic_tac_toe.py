@@ -5,7 +5,7 @@ gameBoard = [[0,0,0],[0,0,0],[0,0,0]]	#Testing
 count = 0	# Keep track of the filling progress
 log=[]	# The log of the coordinate
 isComputerFirst = 0 # 0 for User go first and 1 for computer go first
-Undetermined, User, Computer = range(3)
+UNKNOWN, USER, COMPUTER = range(3)
 
 # Subject to removal #
 # Board Function
@@ -16,11 +16,11 @@ def printBoard():
 	for row in range(3):
 		rowPrint = str(row) + " |"
 		for element in gameBoard[row]:
-			if element == Undetermined:	# Empty Space
+			if element == UNKNOWN:	# Empty Space
 				rowPrint += "   |"
-			elif element == User:	# User's Mark
+			elif element == USER:	# User's Mark
 				rowPrint += " X |"
-			elif element == Computer:	# Program's Mark
+			elif element == COMPUTER:	# Program's Mark
 				rowPrint += " O |"
 			else:
 				print "Something Wrong!!!!"
@@ -54,23 +54,23 @@ def winCheck():
 	# Check row and colum
 	for i in range(3):
 		# Check Row
-		if gameBoard[i] == [User,User,User]:
-			return User
-		elif gameBoard[i] == [Computer,Computer,Computer]:
-			return Computer
+		if gameBoard[i] == [USER,USER,USER]:
+			return USER
+		elif gameBoard[i] == [COMPUTER,COMPUTER,COMPUTER]:
+			return COMPUTER
 		# Mark Column
 		for j in range(3):
-			if gameBoard[i][j] == User:
+			if gameBoard[i][j] == USER:
 				columWin[j] += 1
-			elif gameBoard[i][j] == Computer:
+			elif gameBoard[i][j] == COMPUTER:
 				columWin[j] += 4
 
 	# Check Colum
 	for x in columWin:
 		if x == 3:
-			return User
+			return USER
 		elif x == 12:
-			return Computer
+			return COMPUTER
 
 	# Check diagonal:
 	PlayerAtCenter = gameBoard[1][1]
@@ -98,10 +98,10 @@ def potentialWinCheck(isUser):
 	# Counting for row and column
 	for i in range(3):
 		for j in range(3):
-			if gameBoard[i][j] == Computer:
+			if gameBoard[i][j] == COMPUTER:
 				rowWin[i] += 4
 				columWin[j] += 4
-			elif gameBoard[i][j] == User:
+			elif gameBoard[i][j] == USER:
 				rowWin[i] += 1
 				columWin[j] += 1
 
@@ -109,26 +109,26 @@ def potentialWinCheck(isUser):
 	for i in range(3):
 		if(rowWin[i]==2*test):
 			for j in range(3):
-				if(gameBoard[i][j]==Undetermined):
+				if(gameBoard[i][j]==UNKNOWN):
 					return (i,j)
 	# Check column
 	for j in range(3):
 		if(columWin[j]==2*test):
 			for i in range(3):
-				if(gameBoard[i][j]==Undetermined):
+				if(gameBoard[i][j]==UNKNOWN):
 					return (i,j)
 
 	# Check diagonal series
-	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==Undetermined and gameBoard[1][1]==(test+1)/2):
+	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==UNKNOWN and gameBoard[1][1]==(test+1)/2):
 		return (2,2)
-	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==Undetermined and gameBoard[2][2]==(test+1)/2):
+	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==UNKNOWN and gameBoard[2][2]==(test+1)/2):
 		return (0,0)
-	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==Undetermined and gameBoard[1][1]==(test+1)/2):
+	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==UNKNOWN and gameBoard[1][1]==(test+1)/2):
 		return (2,0)
-	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==Undetermined and gameBoard[2][0]==(test+1)/2):
+	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==UNKNOWN and gameBoard[2][0]==(test+1)/2):
 		return (0,2)
-	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==Undetermined and gameBoard[2][2]==(test+1)/2) \
-			or (gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==Undetermined and gameBoard[2][0]==(test+1)/2):
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==UNKNOWN and gameBoard[2][2]==(test+1)/2) \
+			or (gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==UNKNOWN and gameBoard[2][0]==(test+1)/2):
 		return (1,1)
 
 	# If no win
@@ -153,7 +153,7 @@ def fork(isUser):
 	# Counting for row and column
 	for i in range(3):
 		for j in range(3):
-			if gameBoard[i][j]==Undetermined:
+			if gameBoard[i][j]==UNKNOWN:
 				rowWin[i] += 1
 				columWin[j] += 1
 
@@ -174,22 +174,22 @@ def fork(isUser):
 					threat.append(((i+2)%3,j))
 
 	# Check diagonal series
-	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==Undetermined):
+	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==test and gameBoard[1][1]==UNKNOWN):
 		threat.append((0,0))
 		threat.append((1,1))
-	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==Undetermined):
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==test and gameBoard[2][2]==UNKNOWN):
 		threat.append((0,0))
 		threat.append((2,2))
-	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==test and gameBoard[2][2]==Undetermined):
+	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==test and gameBoard[2][2]==UNKNOWN):
 		threat.append((1,1))
 		threat.append((2,2))
-	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==test and gameBoard[1][1]==Undetermined):
+	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==test and gameBoard[1][1]==UNKNOWN):
 		threat.append((0,2))
 		threat.append((1,1))
-	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==test and gameBoard[2][0]==Undetermined):
+	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==test and gameBoard[2][0]==UNKNOWN):
 		threat.append((0,2))
 		threat.append((2,0))
-	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==Undetermined):
+	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==test and gameBoard[2][0]==UNKNOWN):
 		threat.append((1,1))
 		threat.append((2,0))
 
@@ -218,7 +218,7 @@ def twoInARow():
 	# Counting for row and column
 	for i in range(3):
 		for j in range(3):
-			if gameBoard[i][j]==Undetermined:
+			if gameBoard[i][j]==UNKNOWN:
 				rowWin[i] += 1
 				columWin[j] += 1
 
@@ -226,27 +226,27 @@ def twoInARow():
 	for i in range(3):
 		if(rowWin[i]==2):
 			for j in range(3):
-				if(gameBoard[i][j]==Computer):
+				if(gameBoard[i][j]==COMPUTER):
 					return(i,rightNext(j))
 	# Check column
 	for j in range(3):
-		if(columWin[j]==2*Computer):
+		if(columWin[j]==2*COMPUTER):
 			for i in range(3):
-				if(gameBoard[i][j]==Computer):
+				if(gameBoard[i][j]==COMPUTER):
 					return (rightNext(i),j)
 
 	#Check diagonal series
-	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==Computer and gameBoard[1][1]==Undetermined):
+	if(gameBoard[0][0]==gameBoard[1][1] and gameBoard[2][2]==COMPUTER and gameBoard[1][1]==UNKNOWN):
 		return (1,1)
-	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==Computer and gameBoard[2][2]==Undetermined):
+	if(gameBoard[0][0]==gameBoard[2][2] and gameBoard[1][1]==COMPUTER and gameBoard[2][2]==UNKNOWN):
 		return (2,2)
-	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==Computer and gameBoard[2][2]==Undetermined):
+	if(gameBoard[1][1]==gameBoard[2][2] and gameBoard[0][0]==COMPUTER and gameBoard[2][2]==UNKNOWN):
 		return (1,1)
-	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==Computer and gameBoard[1][1]==Undetermined):
+	if(gameBoard[0][2]==gameBoard[1][1] and gameBoard[2][0]==COMPUTER and gameBoard[1][1]==UNKNOWN):
 		return (1,1)
-	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==Computer and gameBoard[2][0]==Undetermined):
+	if(gameBoard[0][2]==gameBoard[2][0] and gameBoard[1][1]==COMPUTER and gameBoard[2][0]==UNKNOWN):
 		return (2,0)
-	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==Computer and gameBoard[2][0]==Undetermined):
+	if(gameBoard[1][1]==gameBoard[2][0] and gameBoard[0][2]==COMPUTER and gameBoard[2][0]==UNKNOWN):
 		return (1,0)
 
 	# If no two in a row
@@ -255,7 +255,7 @@ def twoInARow():
 
 # User Moving Function
 def checkCoordinateRange(coordinate):
-	return len(coordinate)==2 and coordinate[0]<3 and coordinate[1]<3 and coordinate[0]>=0 and coordinate[1]>=0 and gameBoard[coordinate[0]][coordinate[1]]==Undetermined
+	return len(coordinate)==2 and coordinate[0]<3 and coordinate[1]<3 and coordinate[0]>=0 and coordinate[1]>=0 and gameBoard[coordinate[0]][coordinate[1]]==UNKNOWN
 
 # Get the coordinate from user
 def readCoordinate():
@@ -269,24 +269,24 @@ def readCoordinate():
 # Get user input and putmark
 def userMove():
 	coordinate = readCoordinate()
-	putMark(User, coordinate)
+	putMark(USER, coordinate)
 
 # Program Moving Function
 def programMove():
 	# 1st check if the program can win
 	win = potentialWinCheck(False)
 	if (win!=False):
-		putMark(Computer,win)
+		putMark(COMPUTER,win)
 		return
 	# 2nd block user's win
 	block = potentialWinCheck(True)
 	if (block!=False):
-		putMark(Computer,block)
+		putMark(COMPUTER,block)
 		return
 	# 3rd try to fork
 	programFork = fork(False)
 	if (programFork!=False):
-		putMark(Computer,programFork)
+		putMark(COMPUTER,programFork)
 		return
 
 	# 4th try to block fork by threatening with a two in a row
@@ -294,7 +294,7 @@ def programMove():
 	if (userFork!=False):
 		tryBlock = twoInARow()
 		if(tryBlock!=False):
-			putMark(Computer,tryBlock)
+			putMark(COMPUTER,tryBlock)
 			return
 
 	# 5th put in the center
@@ -304,68 +304,68 @@ def programMove():
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
 	if (programOppoCorner!=False):
-		putMark(Computer,programOppoCorner)
+		putMark(COMPUTER,programOppoCorner)
 		return
 	# 7th get the corner
 	programCorner = getCorner()
 	if (programCorner!=False):
-		putMark(Computer,programCorner)
+		putMark(COMPUTER,programCorner)
 		return
 	# 8th get the side
 	programSide = getSide()
 	if (programSide!=False):
-		putMark(Computer,programSide)
+		putMark(COMPUTER,programSide)
 		return
 
 def getSide():
-	if gameBoard[1][0]==Undetermined:
+	if gameBoard[1][0]==UNKNOWN:
 		return (1,0)
-	elif gameBoard[2][1]==Undetermined:
+	elif gameBoard[2][1]==UNKNOWN:
 		return (2,1)
-	elif gameBoard[1][2]==Undetermined:
+	elif gameBoard[1][2]==UNKNOWN:
 		return (1,2)
-	elif gameBoard[0][1]==Undetermined:
+	elif gameBoard[0][1]==UNKNOWN:
 		return (0,1)
 	else:
 		return False
 
 def getCorner():
-	if gameBoard[2][2]==Undetermined:
+	if gameBoard[2][2]==UNKNOWN:
 		return (2,2)
-	elif gameBoard[0][0]==Undetermined:
+	elif gameBoard[0][0]==UNKNOWN:
 		return (0,0)
-	elif gameBoard[2][0]==Undetermined :
+	elif gameBoard[2][0]==UNKNOWN :
 		return (2,0)
-	elif gameBoard[0][2]==Undetermined:
+	elif gameBoard[0][2]==UNKNOWN:
 		return (0,2)
 	else:
 		return False
 
 def oppoCorner():
-	if(gameBoard[0][0]==User and gameBoard[2][2]==Undetermined):
+	if(gameBoard[0][0]==USER and gameBoard[2][2]==UNKNOWN):
 		return (2,2)
-	elif(gameBoard[2][2]==User and gameBoard[0][0]==Undetermined):
+	elif(gameBoard[2][2]==USER and gameBoard[0][0]==UNKNOWN):
 		return (0,0)
-	elif(gameBoard[0][2]==User and gameBoard[2][0]==Undetermined):
+	elif(gameBoard[0][2]==USER and gameBoard[2][0]==UNKNOWN):
 		return (2,0)
-	elif(gameBoard[2][0]==User and gameBoard[0][2]==Undetermined):
+	elif(gameBoard[2][0]==USER and gameBoard[0][2]==UNKNOWN):
 		return (0,2)
 	else:
 		return False
 
 def center():
-	return gameBoard[1][1]==Undetermined
+	return gameBoard[1][1]==UNKNOWN
 
 # Main Function
 def main():
 	# Prepare
-	winner = Undetermined
+	winner = UNKNOWN
 
 	# Starter
 	print "Welcome to the tic tac toe game!"
 
 	# Loop
-	while (winner == Undetermined and count!=9):
+	while (winner == UNKNOWN and count!=9):
 		if(count%2==isComputerFirst):
 			printBoard()
 			userMove()
@@ -373,9 +373,9 @@ def main():
 			programMove()
 		winner = winCheck()
 
-	if winner != Undetermined:
+	if winner != UNKNOWN:
 		print ''
-		print "You Win! And please report you strategy to the author!" if winner == User else "The Computer Wins!"
+		print "You Win! And please report you strategy to the author!" if winner == USER else "The Computer Wins!"
 	else:
 		print ''
 		print "It's a tie!"
