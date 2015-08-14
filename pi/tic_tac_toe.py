@@ -299,7 +299,7 @@ def programMove():
 
 	# 5th put in the center
 	if (center()):
-		putMark(Computer,(2,2))
+		putMark(COMPUTER,(1,1))
 		return
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
