@@ -6,6 +6,8 @@ count = 0	# Keep track of the filling progress
 log=[]	# The log of the coordinate
 isComputerFirst = 0 # 0 for User go first and 1 for computer go first
 UNKNOWN, USER, COMPUTER = range(3)
+rowWinSum = [0,0,0]
+columnWinSum = [0,0,0]
 
 # Subject to removal #
 # Board Function
@@ -41,32 +43,30 @@ def putMark(activePlayer, coordinate):
 	logInput(activePlayer, coordinate)
 	gameBoard[coordinate[0]][coordinate[1]] = activePlayer
 
+	# Add 4 for program
+	# Add 1 for user
+	if activePlayer == USER:
+		rowWinSum[coordinate[0]] += 1
+		columnWinSum[coordinate[1]] += 1
+	elif activePlayer == COMPUTER:
+		rowWinSum[coordinate[0]] += 4
+		columnWinSum[coordinate[1]] += 4
+
 # Check every possible solution, but might be able to improve
 # Give number for each cell and then we can sum each colum or row or diagno to check win.
 
 # Potential optimization: only check the three potential win options surrounding the last moved slot #
 
 def winCheck():
-	# Add 4 for program
-	# Add 1 for user
-	columWin = [0,0,0]
-
-	# Check row and colum
-	for i in range(3):
-		# Check Row
-		if gameBoard[i] == [USER,USER,USER]:
+	# Check row
+	for x in rowWinSum:
+		if x == 3:
 			return USER
-		elif gameBoard[i] == [COMPUTER,COMPUTER,COMPUTER]:
+		elif x == 12:
 			return COMPUTER
-		# Mark Column
-		for j in range(3):
-			if gameBoard[i][j] == USER:
-				columWin[j] += 1
-			elif gameBoard[i][j] == COMPUTER:
-				columWin[j] += 4
 
-	# Check Colum
-	for x in columWin:
+	# Check Column
+	for x in columnWinSum:
 		if x == 3:
 			return USER
 		elif x == 12:
@@ -91,29 +91,15 @@ def potentialWinCheck(isUser):
 	else:
 		test = 4
 
-	# Counting for winning
-	columWin=[0,0,0]
-	rowWin = [0,0,0]
-
-	# Counting for row and column
-	for i in range(3):
-		for j in range(3):
-			if gameBoard[i][j] == COMPUTER:
-				rowWin[i] += 4
-				columWin[j] += 4
-			elif gameBoard[i][j] == USER:
-				rowWin[i] += 1
-				columWin[j] += 1
-
 	# Check row
 	for i in range(3):
-		if(rowWin[i]==2*test):
+		if(rowWinSum[i]==2*test):
 			for j in range(3):
 				if(gameBoard[i][j]==UNKNOWN):
 					return (i,j)
 	# Check column
 	for j in range(3):
-		if(columWin[j]==2*test):
+		if(columnWinSum[j]==2*test):
 			for i in range(3):
 				if(gameBoard[i][j]==UNKNOWN):
 					return (i,j)
