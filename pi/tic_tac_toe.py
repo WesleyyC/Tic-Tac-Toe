@@ -57,20 +57,18 @@ def putMark(activePlayer, coordinate):
 
 # Potential optimization: only check the three potential win options surrounding the last moved slot #
 
-def winCheck():
-	# Check row
-	for x in rowWinSum:
-		if x == 3:
-			return USER
-		elif x == 12:
-			return COMPUTER
+def checkWinner(newCoordinate):
+	# Check Row
+	if rowWinSum[newCoordinate[0]] == 3:
+		return USER
+	elif rowWinSum[newCoordinate[0]] == 12:
+		return COMPUTER
 
 	# Check Column
-	for x in columnWinSum:
-		if x == 3:
-			return USER
-		elif x == 12:
-			return COMPUTER
+	if columnWinSum[newCoordinate[1]] == 3:
+		return USER
+	elif columnWinSum[newCoordinate[1]] == 12:
+		return COMPUTER
 
 	# Check diagonal:
 	PlayerAtCenter = gameBoard[1][1]
@@ -257,23 +255,25 @@ def userMove():
 	coordinate = readCoordinate()
 	putMark(USER, coordinate)
 
+	return coordinate
+
 # Program Moving Function
 def programMove():
 	# 1st check if the program can win
 	win = potentialWinCheck(False)
 	if (win!=False):
 		putMark(COMPUTER,win)
-		return
+		return win
 	# 2nd block user's win
 	block = potentialWinCheck(True)
 	if (block!=False):
 		putMark(COMPUTER,block)
-		return
+		return block
 	# 3rd try to fork
 	programFork = fork(False)
 	if (programFork!=False):
 		putMark(COMPUTER,programFork)
-		return
+		return programFork
 
 	# 4th try to block fork by threatening with a two in a row
 	userFork = fork(True)
@@ -281,27 +281,27 @@ def programMove():
 		tryBlock = twoInARow()
 		if(tryBlock!=False):
 			putMark(COMPUTER,tryBlock)
-			return
+			return tryBlock
 
 	# 5th put in the center
 	if (center()):
 		putMark(COMPUTER,(1,1))
-		return
+		return (1,1)
 	# 6th try opponent corner
 	programOppoCorner = oppoCorner()
 	if (programOppoCorner!=False):
 		putMark(COMPUTER,programOppoCorner)
-		return
+		return programOppoCorner
 	# 7th get the corner
 	programCorner = getCorner()
 	if (programCorner!=False):
 		putMark(COMPUTER,programCorner)
-		return
+		return programCorner
 	# 8th get the side
 	programSide = getSide()
 	if (programSide!=False):
 		putMark(COMPUTER,programSide)
-		return
+		return programSide
 
 def getSide():
 	if gameBoard[1][0]==UNKNOWN:
@@ -354,10 +354,10 @@ def main():
 	while (winner == UNKNOWN and count!=9):
 		if(count%2==isComputerFirst):
 			printBoard()
-			userMove()
+			newCoordinate = userMove()
 		else:
-			programMove()
-		winner = winCheck()
+			newCoordinate = programMove()
+		winner = checkWinner(newCoordinate)
 
 	if winner != UNKNOWN:
 		print ''
