@@ -55,12 +55,7 @@ def putMark(activePlayer, coordinate):
         rowWinSum[coordinate[0]] += 4
         columnWinSum[coordinate[1]] += 4
 
-
-# Check every possible solution, but might be able to improve
-# Give number for each cell and then we can sum each colum or row or diagno to check win.
-
-# Potential optimization: only check the three potential win options surrounding the last moved slot #
-
+# Only check the three potential win options surrounding the last moved slot #
 def checkWinner(newCoordinate):
     # Check Row
     if rowWinSum[newCoordinate[0]] == 3:
@@ -86,10 +81,10 @@ def checkWinner(newCoordinate):
 
 # Check if the program win by putting one mark, or if the user can win by putting one mark
 # If User=True, check if the user can win
-def potentialWinCheck(isUser):
+def potentialWinCheck(activePlayer):
     # 4 for program
     # 1 for user
-    if isUser:
+    if activePlayer == USER:
         test = 1
     else:
         test = 4
@@ -126,13 +121,13 @@ def potentialWinCheck(isUser):
 
 
 # check the possibility for forking
-def fork(isUser):
+def fork(activePlayer):
     # threat
     threat = []
 
     # 2 for program
     # 1 for user
-    if isUser:
+    if activePlayer == USER:
         test = 1
     else:
         test = 2
@@ -223,7 +218,7 @@ def twoInARow():
                     return i, rightNext(j)
     # Check column
     for j in range(3):
-        if columWin[j] == 2 * COMPUTER:
+        if columWin[j] == 2 * COMPUTER:   ##### What is this???? #####
             for i in range(3):
                 if gameBoard[i][j] == COMPUTER:
                     return rightNext(i), j
@@ -274,23 +269,23 @@ def userMove():
 # Program Moving Function
 def programMove():
     # 1st check if the program can win
-    win = potentialWinCheck(False)
+    win = potentialWinCheck(COMPUTER)
     if win != False:
         putMark(COMPUTER, win)
         return win
     # 2nd block user's win
-    block = potentialWinCheck(True)
+    block = potentialWinCheck(USER)
     if block != False:
         putMark(COMPUTER, block)
         return block
     # 3rd try to fork
-    programFork = fork(False)
+    programFork = fork(COMPUTER)
     if programFork != False:
         putMark(COMPUTER, programFork)
         return programFork
 
     # 4th try to block fork by threatening with a two in a row
-    userFork = fork(True)
+    userFork = fork(USER)
     if userFork != False:
         tryBlock = twoInARow()
         if tryBlock != False:
