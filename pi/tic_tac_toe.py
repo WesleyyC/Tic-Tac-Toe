@@ -182,37 +182,88 @@ def rightNext(n):
 
 # causing a two in a row situation to threat away the fork
 # this is basically the fork function but without storing the possible threat
-def twoInARow():
+def twoInARow(block_fork):
+    potential_move = []
+
     # Check row
     for i in range(3):
         if rowWinSum[i] == 4:
             for j in range(3):
-                if gameBoard[i][j] == COMPUTER:
-                    return i, rightNext(j)
+                if gameBoard[i][j] == UNKNOWN:
+                    if block_fork == (i, j):
+                        return (i, j)
+                    else:
+                        potential_move.append((i, j))
     # Check column
     for j in range(3):
         if columnWinSum[j] == 4:
             for i in range(3):
-                if gameBoard[i][j] == COMPUTER:
-                    return rightNext(i), j
+                if gameBoard[i][j] == UNKNOWN:
+                    if block_fork == (i, j):
+                        return (i, j)
+                    else:
+                        potential_move.append((i, j))
 
     # Check diagonal series
     if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == COMPUTER and gameBoard[1][1] == UNKNOWN:
-        return 1, 1
+        if (0, 0) == block_fork:
+            return (0, 0)
+        else:
+            potential_move.append((0, 0))
+        if (1, 1) == block_fork:
+            return (1, 1)
+        else:
+            potential_move.append((1, 1))
     if gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == COMPUTER and gameBoard[2][2] == UNKNOWN:
-        return 2, 2
+        if (0, 0) == block_fork:
+            return (0, 0)
+        else:
+            potential_move.append((0, 0))
+        if (2, 2) == block_fork:
+            return (2, 2)
+        else:
+            potential_move.append((2, 2))
     if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == COMPUTER and gameBoard[2][2] == UNKNOWN:
-        return 1, 1
+        if (1, 1) == block_fork:
+            return (1, 1)
+        else:
+            potential_move.append((1, 1))
+        if (2, 2) == block_fork:
+            return (2, 2)
+        else:
+            potential_move.append((2, 2))
     if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == COMPUTER and gameBoard[1][1] == UNKNOWN:
-        return 1, 1
+        if (0, 2) == block_fork:
+            return (0, 2)
+        else:
+            potential_move.append((0, 2))
+        if (1, 1) == block_fork:
+            return (1, 1)
+        else:
+            potential_move.append((1, 1))
     if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == COMPUTER and gameBoard[2][0] == UNKNOWN:
-        return 2, 0
+        if (0, 2) == block_fork:
+            return (0, 2)
+        else:
+            potential_move.append((0, 2))
+        if (2, 0) == block_fork:
+            return (2, 0)
+        else:
+            potential_move.append((2, 0))
     if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == COMPUTER and gameBoard[2][0] == UNKNOWN:
-        return 2, 0
+        if (1, 1) == block_fork:
+            return (1, 1)
+        else:
+            potential_move.append((1, 1))
+        if (2, 0) == block_fork:
+            return (2, 0)
+        else:
+            potential_move.append((2, 0))
 
-    # If no two in a row
-    return False
-
+    if not potential_move:
+        return False
+    else:
+        return potential_move[0]
 
 # User Moving Function
 def checkCoordinateRange(coordinate):
@@ -260,7 +311,7 @@ def programMove():
     # 4th try to block fork by threatening with a two in a row
     userFork = fork(USER)
     if userFork != False:
-        tryBlock = twoInARow()
+        tryBlock = twoInARow(userFork)
         if tryBlock != False:
             putMark(COMPUTER, tryBlock)
             return tryBlock
