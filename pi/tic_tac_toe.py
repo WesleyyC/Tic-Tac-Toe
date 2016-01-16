@@ -1,6 +1,8 @@
-# A perfect Tic Tac Toe player using the strategy in Newell and Simon's 1972 tic-tac-toe program.
+# A smart Tic Tac Toe player using the strategy in Newell and Simon's 1972 tic-tac-toe program.
 
-# Initial Variable
+######################################################################
+####################      Global Variables      ######################
+######################################################################
 gameBoard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]  # Testing
 count = 0  # Keep track of the filling progress
 log = []  # The log of the coordinate
@@ -14,8 +16,9 @@ diagonalASum = 0
 diagonalBSum = 0
 
 
-# Subject to removal #
-# Board Function
+######################################################################
+##############           UI I/O Functions           ##################
+######################################################################
 def printBoard():
     print ''
     print "    0   1   2"
@@ -35,17 +38,25 @@ def printBoard():
         print "  +-----------+"
     print ''
 
-def gameBoardAt(coordinate):
-    return gameBoard[coordinate[0]][coordinate[1]]
+# Get the coordinate from user
+def readCoordinate():
+    coordinate = input("Please Give the coordinate of your mark in the form of (row, column) -->")
+    if checkCoordinateRange(coordinate):
+        return coordinate
+    else:
+        print ("Please make sure the input coordinate is in range and empty. Try again :)")
+        return readCoordinate()
 
-# why the hell is and else have the same instruction??? #
-# A log for gaming progress
-def logInput(activePlayer, coordinate):
-    log.append(activePlayer)
-    log.append(coordinate)
 
+######################################################################
+##############             Helper Functions           ################
+######################################################################
+# Get user input and put mark
+def userMove():
+    coordinate = readCoordinate()
+    putMark(USER, coordinate)
 
-# Put down a mark
+    return coordinate
 def putMark(activePlayer, coordinate):
     global count
     count += 1
@@ -70,7 +81,6 @@ def putMark(activePlayer, coordinate):
     if coordinate in DIAGONAL_B:
         global diagonalBSum
         diagonalBSum += score
-
 
 # Only check the three potential win options surrounding the last moved slot #
 def checkWinner(newCoordinate):
@@ -99,9 +109,15 @@ def checkWinner(newCoordinate):
 
     return 0
 
+def gameBoardAt(coordinate):
+    return gameBoard[coordinate[0]][coordinate[1]]
 
+
+######################################################################
+###############       Tic-Tac-Toe Core Algorithms       ##############
+######################################################################
+# Rule 1/2: Win/Block
 # Check if the program win by putting one mark, or if the user can win by putting one mark
-# If User=True, check if the user can win
 def potentialWinCheck(activePlayer):
     # 4 for program
     # 1 for user
@@ -137,7 +153,7 @@ def potentialWinCheck(activePlayer):
     # If no win
     return False
 
-
+# Rule 3/4:  Fork/Block_Fork
 # check the possibility for forking
 def fork(activePlayer):
     # threat
@@ -181,17 +197,9 @@ def fork(activePlayer):
     # If no fork
     return False
 
-
-# return the key right next to the current key
-# def rightNext(n):
-#    if n == 2:
-#         return 1
-#     else:
-#         return n + 1
-
-
-# causing a two in a row situation to threat away the fork
-# this is basically the fork function but without storing the possible threat
+# Rule 4: Create two-in-a-row
+# Cause a two in a row situation to force opponent to defend
+# Also prevent opponent from forking whenever possible
 def twoInARow(block_fork):
     potential_move = []
 
@@ -236,32 +244,50 @@ def twoInARow(block_fork):
     else:
         return potential_move[0]
 
-# User Moving Function
-def checkCoordinateRange(coordinate):
-    return len(coordinate) == 2 and coordinate[0] < 3 and coordinate[1] < 3 and coordinate[0] >= 0 and coordinate[
-                                                                                                           1] >= 0 and \
-           gameBoard[coordinate[0]][coordinate[1]] == UNKNOWN
+# Rule 5: Center
+def center():
+    return gameBoard[1][1] == UNKNOWN
 
-
-# Get the coordinate from user
-def readCoordinate():
-    coordinate = input("Please Give the coordinate of your mark in the form of (row, column) -->")
-    if checkCoordinateRange(coordinate):
-        return coordinate
+# Rule 6: Opposite Corner
+def oppoCorner():
+    if gameBoard[0][0] == USER and gameBoard[2][2] == UNKNOWN:
+        return 2, 2
+    elif gameBoard[2][2] == USER and gameBoard[0][0] == UNKNOWN:
+        return 0, 0
+    elif gameBoard[0][2] == USER and gameBoard[2][0] == UNKNOWN:
+        return 2, 0
+    elif gameBoard[2][0] == USER and gameBoard[0][2] == UNKNOWN:
+        return 0, 2
     else:
-        print ("Please make sure the input coordinate is in range and empty. Try again :)")
-        return readCoordinate()
+        return False
 
+# Rule 7: Empty Corner
+def getCorner():
+    if gameBoard[2][2] == UNKNOWN:
+        return 2, 2
+    elif gameBoard[0][0] == UNKNOWN:
+        return 0, 0
+    elif gameBoard[2][0] == UNKNOWN:
+        return 2, 0
+    elif gameBoard[0][2] == UNKNOWN:
+        return 0, 2
+    else:
+        return False
 
-# Get user input and putmark
-def userMove():
-    coordinate = readCoordinate()
-    putMark(USER, coordinate)
+# Rule 8: Empty Side
+def getSide():
+    if gameBoard[1][0] == UNKNOWN:
+        return 1, 0
+    elif gameBoard[2][1] == UNKNOWN:
+        return 2, 1
+    elif gameBoard[1][2] == UNKNOWN:
+        return 1, 2
+    elif gameBoard[0][1] == UNKNOWN:
+        return 0, 1
+    else:
+        return False
 
-    return coordinate
-
-
-# Program Moving Function
+# Computer choice of move based on ordering of rules
 def programMove():
     # 1st check if the program can win
     win = potentialWinCheck(COMPUTER)
@@ -311,50 +337,23 @@ def programMove():
         return programSide
 
 
-def getSide():
-    if gameBoard[1][0] == UNKNOWN:
-        return 1, 0
-    elif gameBoard[2][1] == UNKNOWN:
-        return 2, 1
-    elif gameBoard[1][2] == UNKNOWN:
-        return 1, 2
-    elif gameBoard[0][1] == UNKNOWN:
-        return 0, 1
-    else:
-        return False
+######################################################################
+###################       Just For Sanity           ##################
+######################################################################
+# A log for gaming progress
+def logInput(activePlayer, coordinate):
+    log.append(activePlayer)
+    log.append(coordinate)
+
+def checkCoordinateRange(coordinate):
+    return len(coordinate) == 2 and coordinate[0] < 3 and coordinate[1] < 3 and coordinate[0] >= 0 and coordinate[
+                                                                                                           1] >= 0 and \
+           gameBoard[coordinate[0]][coordinate[1]] == UNKNOWN
 
 
-def getCorner():
-    if gameBoard[2][2] == UNKNOWN:
-        return 2, 2
-    elif gameBoard[0][0] == UNKNOWN:
-        return 0, 0
-    elif gameBoard[2][0] == UNKNOWN:
-        return 2, 0
-    elif gameBoard[0][2] == UNKNOWN:
-        return 0, 2
-    else:
-        return False
-
-
-def oppoCorner():
-    if gameBoard[0][0] == USER and gameBoard[2][2] == UNKNOWN:
-        return 2, 2
-    elif gameBoard[2][2] == USER and gameBoard[0][0] == UNKNOWN:
-        return 0, 0
-    elif gameBoard[0][2] == USER and gameBoard[2][0] == UNKNOWN:
-        return 2, 0
-    elif gameBoard[2][0] == USER and gameBoard[0][2] == UNKNOWN:
-        return 0, 2
-    else:
-        return False
-
-
-def center():
-    return gameBoard[1][1] == UNKNOWN
-
-
-# Main Function
+######################################################################
+#####################         Main Function        ###################
+######################################################################
 def main():
     # Prepare
     winner = UNKNOWN
@@ -369,14 +368,18 @@ def main():
             newCoordinate = userMove()
         else:
             newCoordinate = programMove()
+
         winner = checkWinner(newCoordinate)
 
-    if winner != UNKNOWN:
-        print ''
-        print "You Win! And please report you strategy to the author!" if winner == USER else "The Computer Wins!"
+    print ''
+
+    if winner == USER:
+        print "You Win! And please report you strategy to the author!"
+    elif winner == COMPUTER:
+        print "The Computer Wins!"
     else:
-        print ''
         print "It's a tie!"
+
     printBoard()
 
 
