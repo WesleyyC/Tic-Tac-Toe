@@ -6,8 +6,12 @@ count = 0  # Keep track of the filling progress
 log = []  # The log of the coordinate
 isComputerFirst = 0  # 0 for User go first and 1 for computer go first
 UNKNOWN, USER, COMPUTER = range(3)
+DIAGONAL_A = [(0, 0), (1, 1), (2, 2)]
+DIAGONAL_B = [(0, 2), (1, 1), (2, 0)]
 rowWinSum = [0, 0, 0]
 columnWinSum = [0, 0, 0]
+diagonalASum = 0
+diagonalBSum = 0
 
 
 # Subject to removal #
@@ -31,6 +35,8 @@ def printBoard():
         print "  +-----------+"
     print ''
 
+def gameBoardAt(coordinate):
+    return gameBoard[coordinate[0]][coordinate[1]]
 
 # why the hell is and else have the same instruction??? #
 # A log for gaming progress
@@ -49,11 +55,22 @@ def putMark(activePlayer, coordinate):
     # Add 4 for program
     # Add 1 for user
     if activePlayer == USER:
-        rowWinSum[coordinate[0]] += 1
-        columnWinSum[coordinate[1]] += 1
-    elif activePlayer == COMPUTER:
-        rowWinSum[coordinate[0]] += 4
-        columnWinSum[coordinate[1]] += 4
+        score = 1
+    else:
+        score = 4
+
+    rowWinSum[coordinate[0]] += score
+
+    columnWinSum[coordinate[1]] += score
+
+    if coordinate in DIAGONAL_A:
+        global diagonalASum
+        diagonalASum += score
+
+    if coordinate in DIAGONAL_B:
+        global diagonalBSum
+        diagonalBSum += score
+
 
 # Only check the three potential win options surrounding the last moved slot #
 def checkWinner(newCoordinate):
@@ -69,12 +86,16 @@ def checkWinner(newCoordinate):
     elif columnWinSum[newCoordinate[1]] == 12:
         return COMPUTER
 
-    # Check diagonal:
-    PlayerAtCenter = gameBoard[1][1]
-    if (gameBoard[0][0] == PlayerAtCenter and PlayerAtCenter == gameBoard[2][2]) \
-            or (gameBoard[0][2] == PlayerAtCenter and PlayerAtCenter == gameBoard[2][0]):
-        # Will return 0 when both diagonal is not occupied
-        return PlayerAtCenter
+    # Check diagonals:
+    if diagonalASum == 3:
+        return USER
+    elif diagonalASum == 12:
+        return COMPUTER
+
+    if diagonalBSum == 3:
+        return USER
+    elif diagonalBSum == 12:
+        return COMPUTER
 
     return 0
 
@@ -103,18 +124,15 @@ def potentialWinCheck(activePlayer):
                     return i, j
 
     # Check diagonal series
-    if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == UNKNOWN and gameBoard[1][1] == (test + 1) / 2:
-        return 2, 2
-    if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == UNKNOWN and gameBoard[2][2] == (test + 1) / 2:
-        return 0, 0
-    if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == UNKNOWN and gameBoard[1][1] == (test + 1) / 2:
-        return 2, 0
-    if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == UNKNOWN and gameBoard[2][0] == (test + 1) / 2:
-        return 0, 2
-    if (gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == UNKNOWN and gameBoard[2][2] == (test + 1) / 2) \
-            or (gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == UNKNOWN and gameBoard[2][0] == (
-                        test + 1) / 2):
-        return 1, 1
+    if diagonalASum == 2 * test:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_A[i]) == UNKNOWN:
+                return DIAGONAL_A[i]
+
+    if diagonalBSum == 2 * test:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_B[i]) == UNKNOWN:
+                return DIAGONAL_B[i]
 
     # If no win
     return False
@@ -144,25 +162,17 @@ def fork(activePlayer):
                     threat.append((i, j))
 
     # Check diagonal series
-    if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == activePlayer and gameBoard[1][1] == UNKNOWN:
-        threat.append((0, 0))
-        threat.append((1, 1))
-    if gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == activePlayer and gameBoard[2][2] == UNKNOWN:
-        threat.append((0, 0))
-        threat.append((2, 2))
-    if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == activePlayer and gameBoard[2][2] == UNKNOWN:
-        threat.append((1, 1))
-        threat.append((2, 2))
-    if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == activePlayer and gameBoard[1][1] == UNKNOWN:
-        threat.append((0, 2))
-        threat.append((1, 1))
-    if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == activePlayer and gameBoard[2][0] == UNKNOWN:
-        threat.append((0, 2))
-        threat.append((2, 0))
-    if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == activePlayer and gameBoard[2][0] == UNKNOWN:
-        threat.append((1, 1))
-        threat.append((2, 0))
+    if diagonalASum == test:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_A[i]) == UNKNOWN:
+                threat.append(DIAGONAL_A[i])
 
+    if diagonalBSum == test:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_B[i]) == UNKNOWN:
+                threat.append(DIAGONAL_B[i])
+
+    # Check if there are any repeated threats
     for i in range(len(threat) - 1):
         for j in range(i + 1, len(threat)):
             if threat[i] == threat[j]:
@@ -173,11 +183,11 @@ def fork(activePlayer):
 
 
 # return the key right next to the current key
-def rightNext(n):
-    if n == 2:
-        return 1
-    else:
-        return n + 1
+# def rightNext(n):
+#    if n == 2:
+#         return 1
+#     else:
+#         return n + 1
 
 
 # causing a two in a row situation to threat away the fork
@@ -205,60 +215,21 @@ def twoInARow(block_fork):
                         potential_move.append((i, j))
 
     # Check diagonal series
-    if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == COMPUTER and gameBoard[1][1] == UNKNOWN:
-        if (0, 0) == block_fork:
-            return (0, 0)
-        else:
-            potential_move.append((0, 0))
-        if (1, 1) == block_fork:
-            return (1, 1)
-        else:
-            potential_move.append((1, 1))
-    if gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == COMPUTER and gameBoard[2][2] == UNKNOWN:
-        if (0, 0) == block_fork:
-            return (0, 0)
-        else:
-            potential_move.append((0, 0))
-        if (2, 2) == block_fork:
-            return (2, 2)
-        else:
-            potential_move.append((2, 2))
-    if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == COMPUTER and gameBoard[2][2] == UNKNOWN:
-        if (1, 1) == block_fork:
-            return (1, 1)
-        else:
-            potential_move.append((1, 1))
-        if (2, 2) == block_fork:
-            return (2, 2)
-        else:
-            potential_move.append((2, 2))
-    if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == COMPUTER and gameBoard[1][1] == UNKNOWN:
-        if (0, 2) == block_fork:
-            return (0, 2)
-        else:
-            potential_move.append((0, 2))
-        if (1, 1) == block_fork:
-            return (1, 1)
-        else:
-            potential_move.append((1, 1))
-    if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == COMPUTER and gameBoard[2][0] == UNKNOWN:
-        if (0, 2) == block_fork:
-            return (0, 2)
-        else:
-            potential_move.append((0, 2))
-        if (2, 0) == block_fork:
-            return (2, 0)
-        else:
-            potential_move.append((2, 0))
-    if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == COMPUTER and gameBoard[2][0] == UNKNOWN:
-        if (1, 1) == block_fork:
-            return (1, 1)
-        else:
-            potential_move.append((1, 1))
-        if (2, 0) == block_fork:
-            return (2, 0)
-        else:
-            potential_move.append((2, 0))
+    if diagonalASum == 4:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_A[i]) == UNKNOWN:
+                if block_fork == DIAGONAL_A[i]:
+                    return DIAGONAL_A[i]
+                else:
+                    potential_move.append(DIAGONAL_A[i])
+
+    if diagonalBSum == 4:
+        for i in range(3):
+            if gameBoardAt(DIAGONAL_B[i]) == UNKNOWN:
+                if block_fork == DIAGONAL_B[i]:
+                    return DIAGONAL_B[i]
+                else:
+                    potential_move.append(DIAGONAL_B[i])
 
     if not potential_move:
         return False
