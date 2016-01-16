@@ -125,57 +125,41 @@ def fork(activePlayer):
     # threat
     threat = []
 
-    # 2 for program
-    # 1 for user
     if activePlayer == USER:
         test = 1
     else:
-        test = 2
-
-    # Counting for winning
-    columWin = [0, 0, 0]
-    rowWin = [0, 0, 0]
-
-    # Counting for row and column
-    for i in range(3):
-        for j in range(3):
-            if gameBoard[i][j] == UNKNOWN:
-                rowWin[i] += 1
-                columWin[j] += 1
+        test = 4
 
     # Check row
     for i in range(3):
-        if rowWin[i] == 2:
+        if rowWinSum[i] == test:
             for j in range(3):
-                if gameBoard[i][j] == test:
-                    threat.append((i, (j + 1) % 3))
-                    threat.append((i, (j + 2) % 3))
+                if gameBoard[i][j] == UNKNOWN:
+                    threat.append((i, j))
     # Check column
     for j in range(3):
-        ##### Why is this twice test instead of 4??? #####
-        if columWin[j] == 2 * test:
+        if columnWinSum[j] == test:
             for i in range(3):
-                if gameBoard[i][j] == test:
-                    threat.append(((i + 1) % 3, j))
-                    threat.append(((i + 2) % 3, j))
+                if gameBoard[i][j] == UNKNOWN:
+                    threat.append((i, j))
 
     # Check diagonal series
-    if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == test and gameBoard[1][1] == UNKNOWN:
+    if gameBoard[0][0] == gameBoard[1][1] and gameBoard[2][2] == activePlayer and gameBoard[1][1] == UNKNOWN:
         threat.append((0, 0))
         threat.append((1, 1))
-    if gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == test and gameBoard[2][2] == UNKNOWN:
+    if gameBoard[0][0] == gameBoard[2][2] and gameBoard[1][1] == activePlayer and gameBoard[2][2] == UNKNOWN:
         threat.append((0, 0))
         threat.append((2, 2))
-    if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == test and gameBoard[2][2] == UNKNOWN:
+    if gameBoard[1][1] == gameBoard[2][2] and gameBoard[0][0] == activePlayer and gameBoard[2][2] == UNKNOWN:
         threat.append((1, 1))
         threat.append((2, 2))
-    if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == test and gameBoard[1][1] == UNKNOWN:
+    if gameBoard[0][2] == gameBoard[1][1] and gameBoard[2][0] == activePlayer and gameBoard[1][1] == UNKNOWN:
         threat.append((0, 2))
         threat.append((1, 1))
-    if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == test and gameBoard[2][0] == UNKNOWN:
+    if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == activePlayer and gameBoard[2][0] == UNKNOWN:
         threat.append((0, 2))
         threat.append((2, 0))
-    if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == test and gameBoard[2][0] == UNKNOWN:
+    if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == activePlayer and gameBoard[2][0] == UNKNOWN:
         threat.append((1, 1))
         threat.append((2, 0))
 
@@ -199,26 +183,15 @@ def rightNext(n):
 # causing a two in a row situation to threat away the fork
 # this is basically the fork function but without storing the possible threat
 def twoInARow():
-    # Counting for winning
-    columWin = [0, 0, 0]
-    rowWin = [0, 0, 0]
-
-    # Counting for row and column
-    for i in range(3):
-        for j in range(3):
-            if gameBoard[i][j] == UNKNOWN:
-                rowWin[i] += 1
-                columWin[j] += 1
-
     # Check row
     for i in range(3):
-        if rowWin[i] == 2:
+        if rowWinSum[i] == 4:
             for j in range(3):
                 if gameBoard[i][j] == COMPUTER:
                     return i, rightNext(j)
     # Check column
     for j in range(3):
-        if columWin[j] == 2 * COMPUTER:   ##### What is this???? #####
+        if columnWinSum[j] == 4:
             for i in range(3):
                 if gameBoard[i][j] == COMPUTER:
                     return rightNext(i), j
@@ -235,7 +208,7 @@ def twoInARow():
     if gameBoard[0][2] == gameBoard[2][0] and gameBoard[1][1] == COMPUTER and gameBoard[2][0] == UNKNOWN:
         return 2, 0
     if gameBoard[1][1] == gameBoard[2][0] and gameBoard[0][2] == COMPUTER and gameBoard[2][0] == UNKNOWN:
-        return 1, 0
+        return 2, 0
 
     # If no two in a row
     return False
@@ -291,6 +264,9 @@ def programMove():
         if tryBlock != False:
             putMark(COMPUTER, tryBlock)
             return tryBlock
+        else:
+            putMark(COMPUTER, userFork)
+            return userFork
 
     # 5th put in the center
     if center():
