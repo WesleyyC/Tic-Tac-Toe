@@ -349,39 +349,3 @@ def checkCoordinateRange(coordinate):
     return len(coordinate) == 2 and coordinate[0] < 3 and coordinate[1] < 3 and coordinate[0] >= 0 and coordinate[
                                                                                                            1] >= 0 and \
            gameBoard[coordinate[0]][coordinate[1]] == UNKNOWN
-
-
-######################################################################
-#####################         Main Function        ###################
-######################################################################
-def main():
-    # Prepare
-    winner = UNKNOWN
-
-    # Starter
-    print "Welcome to the tic tac toe game!"
-
-    # Loop
-    while winner == UNKNOWN and count != 9:
-        if count % 2 == isComputerFirst:
-            printBoard()
-            newCoordinate = userMove()
-        else:
-            newCoordinate = programMove()
-
-        winner = checkWinner(newCoordinate)
-
-    print ''
-
-    if winner == USER:
-        print "You Win! And please report you strategy to the author!"
-    elif winner == COMPUTER:
-        print "The Computer Wins!"
-    else:
-        print "It's a tie!"
-
-    printBoard()
-
-
-if __name__ == '__main__':
-    main()
