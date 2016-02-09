@@ -1,6 +1,8 @@
 Tic-Tac-Toe
 ===========
 
+`We are currently working on a raspberry pi intergration to bring this virtual board game to an actual board game.`
+
 A perfect Tic Tac Toe player using the strategy in Newell and Simon's 1972 tic-tac-toe program (http://en.wikipedia.org/wiki/Tic-tac-toe#Strategy).
 
 Feel free to play around with the code and let me know if there are any bugs.
