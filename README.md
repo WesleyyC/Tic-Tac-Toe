@@ -14,20 +14,20 @@ Please make sure you are running Python 2 instead of Python 3.
 
 ### Run the standalone game without a Raspberry Pi
 
-```shell
+```
 python <project>\original_code\tic_tac_toe.py
-```shell
+```
 
 ### Run the game on Raspberry Pi
-	1. Open up terminal in Raspbian
-	2. Start Python 2 shell with IDLE as Root so that you can access GPIO on the board
+1. Open up terminal in Raspbian
+2. Start Python 2 shell with IDLE as Root so that you can access GPIO on the board
 
-```shell
+```
 sudo idle &
-```shell	
+```	
 
-	3. Open up the project in an editer: File -> Open -> <project>\pi_interface.py
-	4. Inside the editer, hit F5 to run!
+3. Open up the project in an editer: File -> Open -> <project>\pi_interface.py
+4. Inside the editer, hit F5 to run!
 
 
 Hardware Setup
