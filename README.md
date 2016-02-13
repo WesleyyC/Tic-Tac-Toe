@@ -16,7 +16,8 @@ Please make sure you are running Python 2 instead of Python 3.
 
 ```shell
 python <project>\original_code\tic_tac_toe.py
-```
+```shell
+
 ### Run the game on Raspberry Pi
 	1. Open up terminal in Raspbian
 	2. Start Python 2 shell with IDLE as Root so that you can access GPIO on the board
